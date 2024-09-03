@@ -10,7 +10,7 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.POST("/download", handler.Download)
+	router.POST("/api/download", handler.Download)
 
 	err := router.Run(":5000")
 	if err != nil {
