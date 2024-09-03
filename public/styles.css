@@ -1,0 +1,76 @@
+html * {
+	font-family: 'Hack';
+	background-color: #333;
+	color: whitesmoke;
+	margin: 0;
+	padding: 0;
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 75vh;
+
+	* {
+		box-sizing: border-box;
+	}
+}
+
+.size-match {
+	* {
+		box-sizing: border-box;
+	}
+}
+
+.header-container {
+	justify-content: center;
+	align-items: center;
+	display: flex;
+	margin-bottom: 5px;
+}
+
+.header-title {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	* {
+		margin: 0;
+		padding: 0;
+	}
+}
+
+
+.form-container {
+	display: flex;
+
+	* {
+		margin: 5px;
+	}
+
+	.link-input {
+		flex: 1;
+		border: 1px solid whitesmoke;
+		border-radius: 5px;
+		text-align: center;
+		height: 25px;
+		padding: 5px;
+	}
+
+	.submit-button {
+		border: 1px solid whitesmoke;
+		border-radius: 5px;
+		height: 25px;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+
+	.submit-button:hover {
+		background-color: whitesmoke;
+		color: #333;
+		cursor: pointer;
+	}
+}
