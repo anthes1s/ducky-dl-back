@@ -5,12 +5,19 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
 	router := gin.Default()
 
-	router.POST("/api/download", handler.Download)
+	router.Static("/uploads", "/app/uploads")
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
+	router.POST("/api/download", func(ctx *gin.Context) {
+		handler.Download(ctx, validate)
+	})
 
 	err := router.Run(":5000")
 	if err != nil {
