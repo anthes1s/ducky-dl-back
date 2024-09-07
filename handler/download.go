@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os/exec"
 
@@ -24,6 +25,7 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 	var req ClientRequest
 	err := ctx.BindJSON(&req)
 	if err != nil {
+		log.Printf("Error occurred - %v", err)
 		ctx.JSON(
 			http.StatusBadRequest,
 			ServerResponse{
@@ -38,6 +40,7 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 
 	err = validate.Struct(&req)
 	if err != nil {
+		log.Printf("Error occurred - %v", err)
 		ctx.JSON(
 			http.StatusBadRequest,
 			ServerResponse{
@@ -52,11 +55,12 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 	cmd := exec.Command("yt-dlp", "-f", "mp4", "--get-filename", req.Link)
 	filename, err := cmd.CombinedOutput()
 	if err != nil {
+		log.Printf("Error occurred - %v", err)
 		ctx.JSON(
 			http.StatusBadRequest,
 			ServerResponse{
 				Success:  false,
-				Message:  "Error occured while downloading a file, failed to extract filename",
+				Message:  "Error occured while downloading a file, failed to get a files name",
 				URL:      "",
 				Filename: "",
 			},
@@ -67,6 +71,7 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 	cmd = exec.Command("yt-dlp", "-f", "mp4", "-P", "/app/uploads", "--progress", "--no-playlist", req.Link)
 	_, err = cmd.CombinedOutput()
 	if err != nil {
+		log.Printf("Error occurred - %v", err)
 		ctx.JSON(
 			http.StatusBadRequest,
 			ServerResponse{

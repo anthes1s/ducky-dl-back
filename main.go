@@ -19,7 +19,7 @@ func main() {
 		handler.Download(ctx, validate)
 	})
 
-	err := router.Run(":5000")
+	err := router.Run(":10000")
 	if err != nil {
 		log.Fatalf("Server failed to run!")
 	}
