@@ -49,7 +49,7 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 		)
 		return
 	}
-	cmd := exec.Command("yt-dlp", "--get-filename", req.Link)
+	cmd := exec.Command("yt-dlp", "-f", "mp4", "--get-filename", req.Link)
 	filename, err := cmd.CombinedOutput()
 	if err != nil {
 		ctx.JSON(
@@ -64,7 +64,7 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 		return
 	}
 
-	cmd = exec.Command("yt-dlp", "-P", "/app/uploads", "--progress", "--no-playlist", req.Link)
+	cmd = exec.Command("yt-dlp", "-f", "mp4", "-P", "/app/uploads", "--progress", "--no-playlist", req.Link)
 	_, err = cmd.CombinedOutput()
 	if err != nil {
 		ctx.JSON(
