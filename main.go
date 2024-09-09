@@ -2,24 +2,26 @@ package main
 
 import (
 	"ducky-dl/handler"
+	"ducky-dl/server"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 func main() {
-	router := gin.Default()
+	s := server.New()
 
-	router.Static("/uploads", "/app/uploads")
+	s.Router.ForwardedByClientIP = true
+	s.Router.SetTrustedProxies([]string{os.Getenv("NGINX_PROXY")})
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
+	s.Router.Static("/uploads", "/app/uploads")
 
-	router.POST("/api/download", func(ctx *gin.Context) {
-		handler.Download(ctx, validate)
+	s.Router.POST("/api/download", func(ctx *gin.Context) {
+		handler.Download(ctx, s.Validator)
 	})
 
-	err := router.Run(":10000")
+	err := s.Router.Run(":10000")
 	if err != nil {
 		log.Fatalf("Server failed to run!")
 	}

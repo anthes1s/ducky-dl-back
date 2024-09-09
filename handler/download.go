@@ -45,7 +45,7 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 			http.StatusBadRequest,
 			ServerResponse{
 				Success:  false,
-				Message:  "Error occured while downloading a file, failed to valided a link",
+				Message:  "Invalid link",
 				URL:      "",
 				Filename: "",
 			},
