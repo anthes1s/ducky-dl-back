@@ -30,7 +30,7 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 			http.StatusBadRequest,
 			ServerResponse{
 				Success:  false,
-				Message:  "Error occured while downloading a file, failed to bind",
+				Message:  "Error occured while downloading a file",
 				URL:      "",
 				Filename: "",
 			},
@@ -52,7 +52,12 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 		)
 		return
 	}
-	cmd := exec.Command("yt-dlp", "-f", "mp4", "--get-filename", req.Link)
+	cmd := exec.Command(
+		"yt-dlp",
+		"-f", "mp4",
+		"--get-filename",
+		req.Link,
+	)
 	filename, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("Error occurred - %v", err)
@@ -68,7 +73,18 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 		return
 	}
 
-	cmd = exec.Command("yt-dlp", "-f", "mp4", "-P", "/app/uploads", "--progress", "--no-playlist", req.Link)
+	// TODO: Find a way to constantly sent progress% to the user
+	// 1. Use WebSockets
+	// 2. Send standard output to the user
+	// 3. Render progress in the client
+	cmd = exec.Command(
+		"yt-dlp",
+		"-f", "mp4",
+		"-P", "/app/uploads",
+		"--progress",
+		"--no-playlist",
+		req.Link,
+	)
 	_, err = cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("Error occurred - %v", err)
