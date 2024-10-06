@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "starting cleanup..."
+
 cd /app/uploads || exit
 
 current_time=$(date +%s)

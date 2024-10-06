@@ -10,9 +10,8 @@ RUN apk add ffmpeg python3 py3-pip
 COPY --from=build /app/bin/ducky-api /usr/local/bin
 COPY --from=build /app/cleanup.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/cleanup.sh
-RUN echo "*/5 * * * * /usr/local/bin/cleanup.sh" >> /etc/crontabs/root
+RUN echo "*/15 * * * * /usr/local/bin/cleanup.sh" >> /etc/crontabs/root
 RUN wget -P /usr/local/bin https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp
 RUN chmod +x /usr/local/bin/yt-dlp
-RUN ls -l /app/bin
 EXPOSE 10000
-CMD ducky-api
+CMD /bin/sh -c crond && ducky-api
