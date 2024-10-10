@@ -5,8 +5,6 @@ import (
 	"ducky-dl/server"
 	"log"
 	"os"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -17,9 +15,7 @@ func main() {
 
 	s.Router.Static("/uploads", "/app/uploads")
 
-	s.Router.POST("/api/download", func(ctx *gin.Context) {
-		handler.Download(ctx, s.Validator)
-	})
+	s.Router.POST("/api/download", handler.Download)
 
 	err := s.Router.Run(":10000")
 	if err != nil {

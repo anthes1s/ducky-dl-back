@@ -5,13 +5,13 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type ClientRequest struct {
-	Link string `json:"link" validate:"url"`
+	Link string `json:"link"`
 }
 
 type ServerResponse struct {
@@ -21,8 +21,9 @@ type ServerResponse struct {
 	Filename string `json:"filename"`
 }
 
-func Download(ctx *gin.Context, validate *validator.Validate) {
+func Download(ctx *gin.Context) {
 	var req ClientRequest
+
 	err := ctx.BindJSON(&req)
 	if err != nil {
 		log.Printf("Error occurred - %v", err)
@@ -38,9 +39,26 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 		return
 	}
 
-	err = validate.Struct(&req)
+	// TODO: Refactor and optimize in the way that you don't have to recompile the pattern at each request
+	pattern := `(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/(?:watch\?v=|embed\/|v\/|.*[?&]v=))?([-a-zA-Z0-9_]{11})`
+	re, err := regexp.Compile(pattern)
 	if err != nil {
-		log.Printf("Error occurred - %v", err)
+		log.Printf("Error: Invalid link - %v, %v", req.Link, err)
+		ctx.JSON(
+			http.StatusInternalServerError,
+			ServerResponse{
+				Success:  false,
+				Message:  "Internal server error",
+				URL:      "",
+				Filename: "",
+			},
+		)
+		return
+	}
+
+	matches := re.MatchString(req.Link)
+	if !matches {
+		log.Printf("Error: Invalid link - %v, %v", req.Link, err)
 		ctx.JSON(
 			http.StatusBadRequest,
 			ServerResponse{
@@ -52,6 +70,7 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 		)
 		return
 	}
+
 	cmd := exec.Command(
 		"yt-dlp",
 		"-f", "mp4",
@@ -74,9 +93,6 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 	}
 
 	// TODO: Find a way to constantly sent progress% to the user
-	// 1. Use WebSockets
-	// 2. Send standard output to the user
-	// 3. Render progress in the client
 	cmd = exec.Command(
 		"yt-dlp",
 		"-f", "mp4",
@@ -109,5 +125,4 @@ func Download(ctx *gin.Context, validate *validator.Validate) {
 			Filename: string(filename),
 		},
 	)
-	return
 }
