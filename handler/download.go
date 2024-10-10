@@ -28,10 +28,10 @@ func Download(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("Error occurred - %v", err)
 		ctx.JSON(
-			http.StatusBadRequest,
+			http.StatusInternalServerError,
 			ServerResponse{
 				Success:  false,
-				Message:  "Error occured while downloading a file",
+				Message:  "Internal server error",
 				URL:      "",
 				Filename: "",
 			},
@@ -43,7 +43,7 @@ func Download(ctx *gin.Context) {
 	pattern := `(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/(?:watch\?v=|embed\/|v\/|.*[?&]v=))?([-a-zA-Z0-9_]{11})`
 	re, err := regexp.Compile(pattern)
 	if err != nil {
-		log.Printf("Error: Invalid link - %v, %v", req.Link, err)
+		log.Printf("Error: %v", err)
 		ctx.JSON(
 			http.StatusInternalServerError,
 			ServerResponse{
@@ -84,7 +84,7 @@ func Download(ctx *gin.Context) {
 			http.StatusBadRequest,
 			ServerResponse{
 				Success:  false,
-				Message:  "Error occured while downloading a file, failed to get a files name",
+				Message:  "Internal server error",
 				URL:      "",
 				Filename: "",
 			},
